@@ -1,0 +1,6 @@
+name = "postdutyfree-worker"
+main = "worker.js"        # il file del Worker
+compatibility_date = "2025-11-21"
+
+# Specifica che vogliamo Module Worker
+type = "module"
