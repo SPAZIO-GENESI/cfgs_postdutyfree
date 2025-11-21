@@ -1,4 +1,4 @@
-name = "postdutyfree-worker"
+name = "cfgs-dutyfree"
 main = "worker.js"        # il file del Worker
 compatibility_date = "2025-11-21"
 
