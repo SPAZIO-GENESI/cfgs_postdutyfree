@@ -5,29 +5,34 @@ export default {
     }
 
     let data;
-
-    // Leggi il body in modo sicuro
     try {
+      // Legge il body come testo
       const textBody = await request.text();
+      console.log("Body ricevuto:", textBody);
+
+      // Parse JSON
       data = JSON.parse(textBody);
     } catch (err) {
       return new Response("Errore parsing JSON: " + err.toString(), { status: 400 });
     }
 
-    // Assicurati che i campi esistano
+    // Controllo dei campi obbligatori
     const recordKey = data?.recordKey;
     const fullPath = data?.fullPath;
     let cleanFilename = data?.cleanFilename;
 
-    if (!recordKey || !fullPath || !cleanFilename) {
-      return new Response("Error: Missing data", { status: 400 });
-    }
+    console.log("Dati estratti:", { recordKey, fullPath, cleanFilename });
+    
 
-    // Converti _png/_jpg in estensione corretta
+    if (!recordKey) return new Response("Missing recordKey", { status: 400 });
+    if (!fullPath) return new Response("Missing fullPath", { status: 400 });
+    if (!cleanFilename) return new Response("Missing cleanFilename", { status: 400 });
+
+    // Correzione estensione
     cleanFilename = cleanFilename.replace(/_png$/, ".png").replace(/_jpg$/, ".jpg");
 
     try {
-      // 1️⃣ Scarica immagine
+      // 1️⃣ Scarica immagine da Drive
       const imageResp = await fetch(fullPath);
       if (!imageResp.ok) {
         return new Response(`Errore scaricando immagine: ${imageResp.statusText}`, { status: 500 });
@@ -44,7 +49,9 @@ export default {
         })
       });
 
-      if (!sirvTokenResp.ok) return new Response("Errore autenticazione Sirv", { status: 500 });
+      if (!sirvTokenResp.ok) {
+        return new Response("Errore autenticazione Sirv", { status: 500 });
+      }
       const sirvData = await sirvTokenResp.json();
       const sirvToken = sirvData.token;
 
@@ -63,8 +70,8 @@ export default {
       }
 
       return new Response("OK", { status: 200 });
-
     } catch (err) {
+      console.error("Errore Worker:", err);
       return new Response("Errore: " + err.toString(), { status: 500 });
     }
   }
