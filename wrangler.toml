@@ -2,3 +2,6 @@ name = "cfgs-dutyfree"
 main = "worker.js"        # il file del Worker
 compatibility_date = "2025-11-21"
 
+[vars]
+SIRV_TOKEN_URL = "https://api.sirv.com/v2/token"
+SIRV_UPLOAD_URL = "https://api.sirv.com/v2/files"
